@@ -1,6 +1,4 @@
-// const { secret } = require('../config.json')
 const jwt = require('jsonwebtoken')
-const APP_SECRET = 'SOMETHING'
 const config = require('./lib/config')
 
 function getUserId(context) {
@@ -15,6 +13,5 @@ function getUserId(context) {
 }
 
 module.exports = {
-  getUserId,
-  // APP_SECRET
+  getUserId
 }

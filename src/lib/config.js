@@ -1,5 +1,5 @@
-const config = require('../../config.json')
+const secret = "GraphQL-is-aw3some"
 
 module.exports = {
-  config
+  secret
 }
