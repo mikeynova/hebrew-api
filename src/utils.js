@@ -1,13 +1,13 @@
 // const { secret } = require('../config.json')
 const jwt = require('jsonwebtoken')
 const APP_SECRET = 'SOMETHING'
-const { secret } = require('./lib/config')
+const config = require('./lib/config')
 
 function getUserId(context) {
   const Authorization = context.request.get('Authorization')
   if (Authorization) {
     const token = Authorization.replace('Bearer ', '')
-    const { userId } = jwt.verify(token, secret)
+    const { userId } = jwt.verify(token, config.secret)
     return userId
   }
 
