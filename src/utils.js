@@ -1,4 +1,5 @@
-const config = require('./lib/config')
+// const config = require('./lib/config')
+const config = require('../config.json')
 const jwt = require('jsonwebtoken')
 
 function getUserId(context) {
