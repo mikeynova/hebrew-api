@@ -1,3 +1,5 @@
-import cfg from '../../config.json'
+const cfg = require('../../config.json')
 
-export default cfg
+module.exports = {
+  cfg
+}

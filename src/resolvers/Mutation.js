@@ -1,11 +1,12 @@
+const config = require('../lib/config')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET, getUserId } = require('../utils')
+const { getUserId } = require('../utils')
 
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
   const user = await context.prisma.createUser({ ...args, password })
-  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  const token = jwt.sign({ userId: user.id }, config.secret)
   return {
     token: token,
     user: user,
@@ -17,7 +18,7 @@ async function fbAuth(parent, args, context, info) {
   if (!user) {
     user = await context.prisma.createUser({ ...args, facebookId: args.facebookId })
   }
-  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  const token = jwt.sign({ userId: user.id }, config.secret)
   return {
     token,
     user
@@ -37,7 +38,7 @@ async function login(parent, args, context, info) {
     throw new Error('Invalid password')
   }
 
-  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+  const token = jwt.sign({ userId: user.id }, config.secret)
 
   // 3
   return {
