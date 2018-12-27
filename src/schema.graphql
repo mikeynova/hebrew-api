@@ -1,0 +1,63 @@
+type Query {
+  info: String!
+  feed: [Link!]!
+  users: [User!]!
+  user(facebookId: String!): User!
+  group(name: String!): Group!
+  lessons: [Lesson!]!
+  lesson(id: ID!): Lesson!
+}
+
+type Mutation {
+  post(url: String!, description: String!): Link!
+  # signup(email: String, password: String, name: String!, facebookId: String): User
+  fbAuth(facebookId: String!, name: String!): AuthPayload
+  signup(email: String, password: String, name: String!): User
+  login(email: String!, password: String!): AuthPayload
+  postGroup(name: String!): Group!
+  postLesson(name: String!, groupId: String!): Lesson!
+  postPage(data: String!, pageNumber: Int!, lessonId: String!): Page!
+  deleteUser(id: ID!): User!
+  SignUpMutation(password: String!, name: String!): AuthPayload
+}
+
+type Link {
+  id: ID!
+  description: String!
+  url: String!
+  postedBy: User
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String
+  password: String
+  links: [Link!]!
+  facebookId: String
+}
+
+type Group {
+  id: ID!
+  name: String!
+  lessons: [Lesson!]!
+}
+
+type Lesson {
+  id: ID!
+  name: String!
+  group: Group
+  pages: [Page!]!
+}
+
+type Page {
+  id: ID!
+  pageNumber: Int!
+  data: String!
+  lesson: Lesson!
+}
