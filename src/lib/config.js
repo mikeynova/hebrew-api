@@ -1,5 +1,5 @@
-const cfg = require('../../config.json')
+const { secret } = require('../../config.json')
 
 module.exports = {
-  cfg
+  secret
 }
