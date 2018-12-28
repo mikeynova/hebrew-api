@@ -1,4 +1,4 @@
-const config = require('../../config')
+const config = require('../lib/config')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { getUserId } = require('../utils')
