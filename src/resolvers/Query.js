@@ -10,8 +10,13 @@ function user(parent, args, context, info) {
   return context.prisma.user(args)
 }
 
-function group(parent, args, context, info) {
-  return context.prisma.group()
+async function group(parent, args, context, info) {
+  const group = await context.prisma.group(args)
+  const lessons = await context.prisma.group(args).lessons()
+  return {
+    ...group,
+    lessons
+  }
 }
 
 function lessons(parent, args, context, info) {
