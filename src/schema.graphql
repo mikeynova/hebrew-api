@@ -4,6 +4,7 @@ type Query {
   users: [User!]!
   user(facebookId: String!): User!
   group(name: String!): Group!
+  groups: [Group!]!
   lessons: [Lesson!]!
   lesson(id: ID!): Lesson!
 }

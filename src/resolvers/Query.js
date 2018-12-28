@@ -19,6 +19,16 @@ async function group(parent, args, context, info) {
   }
 }
 
+async function groups(parent, args, context, info) {
+  const groups = await context.prisma.groups()
+  return groups.map(async group => {
+    return {
+      ...group,
+      lessons: await context.prisma.group(group).lessons()
+    }
+  })
+}
+
 function lessons(parent, args, context, info) {
   return context.prisma.lessons()
 }
@@ -36,6 +46,7 @@ module.exports = {
   users,
   user,
   group,
+  groups,
   lessons,
   lesson,
 }
