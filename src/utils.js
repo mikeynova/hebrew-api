@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken')
-const config = require('./lib/config')
+const cfg = require('./lib/config')
 
 function getUserId(context) {
   const Authorization = context.request.get('Authorization')
   if (Authorization) {
     const token = Authorization.replace('Bearer ', '')
-    const { userId } = jwt.verify(token, config.secret)
+    const { userId } = jwt.verify(token, cfg.secret)
     return userId
   }
 
