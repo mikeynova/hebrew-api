@@ -41,7 +41,16 @@ function lesson(parent, args, context, info) {
   }))
 }
 
+async function page(parent, args, context, info) {
+  const pages = await context.prisma.lesson({ id: args.id }).pages()
+  const page = pages.filter(page => page.pageNumber === args.pageNumber)
+  return {
+    page
+  }
+}
+
 module.exports = {
+  page,
   feed,
   users,
   user,
