@@ -18,6 +18,7 @@ type Mutation {
   postGroup(name: String!): Group!
   postLesson(name: String!, groupId: String!): Lesson!
   postPage(data: String!, pageNumber: Int!, lessonId: String!): Page!
+  deletePage(lessonId: String!, pageNumber: Int!): Page!
   deleteUser(id: ID!): User!
   SignUpMutation(password: String!, name: String!): AuthPayload
 }
