@@ -77,6 +77,14 @@ function postPage(parent, args, context, info) {
   })
 }
 
+async function deletePage(parent, args, context, info) {
+  const pages = await context.prisma.lesson({ id: args.lessonId }).pages()
+  const page = pages.filter(page => page.pageNumber === args.pageNumber)[0]
+  return context.prisma.deletePage({
+    id: page.id
+  })
+}
+
 function deleteUser(parent, args, context, info) {
   return context.prisma.deleteUser({
     id: args.id
@@ -91,5 +99,6 @@ module.exports = {
   postLesson,
   postPage,
   deleteUser,
-  fbAuth
+  fbAuth,
+  deletePage
 }
