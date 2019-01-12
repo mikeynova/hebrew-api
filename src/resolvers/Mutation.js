@@ -4,12 +4,17 @@ const jwt = require('jsonwebtoken')
 const { getUserId } = require('../utils')
 
 async function signup(parent, args, context, info) {
+  let user = await context.prisma.user({ email: args.email })
   const password = await bcrypt.hash(args.password, 10)
-  const user = await context.prisma.createUser({ ...args, password })
+  if (user) {
+    throw new Error('Email already in use')
+  } else {
+    user = await context.prisma.createUser({ ...args, password })
+  }
   const token = jwt.sign({ userId: user.id }, secret)
   return {
     token: token,
-    user: user,
+    user: user
   }
 }
 
