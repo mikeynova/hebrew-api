@@ -1,7 +1,3 @@
-function feed(parent, args, context, info) {
-  return context.prisma.links()
-}
-
 function users(parent, args, context, info) {
   return context.prisma.users()
 }
@@ -51,7 +47,6 @@ async function page(parent, args, context, info) {
 
 module.exports = {
   page,
-  feed,
   users,
   user,
   group,
