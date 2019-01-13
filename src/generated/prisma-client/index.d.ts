@@ -16,7 +16,6 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
 export interface Exists {
   group: (where?: GroupWhereInput) => Promise<boolean>;
   lesson: (where?: LessonWhereInput) => Promise<boolean>;
-  link: (where?: LinkWhereInput) => Promise<boolean>;
   page: (where?: PageWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
@@ -86,29 +85,6 @@ export interface Prisma {
       last?: Int;
     }
   ) => LessonConnectionPromise;
-  link: (where: LinkWhereUniqueInput) => LinkPromise;
-  links: (
-    args?: {
-      where?: LinkWhereInput;
-      orderBy?: LinkOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => FragmentableArray<Link>;
-  linksConnection: (
-    args?: {
-      where?: LinkWhereInput;
-      orderBy?: LinkOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => LinkConnectionPromise;
   page: (where: PageWhereUniqueInput) => PagePromise;
   pages: (
     args?: {
@@ -193,22 +169,6 @@ export interface Prisma {
   ) => LessonPromise;
   deleteLesson: (where: LessonWhereUniqueInput) => LessonPromise;
   deleteManyLessons: (where?: LessonWhereInput) => BatchPayloadPromise;
-  createLink: (data: LinkCreateInput) => LinkPromise;
-  updateLink: (
-    args: { data: LinkUpdateInput; where: LinkWhereUniqueInput }
-  ) => LinkPromise;
-  updateManyLinks: (
-    args: { data: LinkUpdateManyMutationInput; where?: LinkWhereInput }
-  ) => BatchPayloadPromise;
-  upsertLink: (
-    args: {
-      where: LinkWhereUniqueInput;
-      create: LinkCreateInput;
-      update: LinkUpdateInput;
-    }
-  ) => LinkPromise;
-  deleteLink: (where: LinkWhereUniqueInput) => LinkPromise;
-  deleteManyLinks: (where?: LinkWhereInput) => BatchPayloadPromise;
   createPage: (data: PageCreateInput) => PagePromise;
   updatePage: (
     args: { data: PageUpdateInput; where: PageWhereUniqueInput }
@@ -256,9 +216,6 @@ export interface Subscription {
   lesson: (
     where?: LessonSubscriptionWhereInput
   ) => LessonSubscriptionPayloadSubscription;
-  link: (
-    where?: LinkSubscriptionWhereInput
-  ) => LinkSubscriptionPayloadSubscription;
   page: (
     where?: PageSubscriptionWhereInput
   ) => PageSubscriptionPayloadSubscription;
@@ -307,18 +264,6 @@ export type GroupOrderByInput =
   | "updatedAt_ASC"
   | "updatedAt_DESC";
 
-export type LinkOrderByInput =
-  | "id_ASC"
-  | "id_DESC"
-  | "description_ASC"
-  | "description_DESC"
-  | "url_ASC"
-  | "url_DESC"
-  | "createdAt_ASC"
-  | "createdAt_DESC"
-  | "updatedAt_ASC"
-  | "updatedAt_DESC";
-
 export type UserOrderByInput =
   | "id_ASC"
   | "id_DESC"
@@ -330,6 +275,8 @@ export type UserOrderByInput =
   | "password_DESC"
   | "facebookId_ASC"
   | "facebookId_DESC"
+  | "completedLessons_ASC"
+  | "completedLessons_DESC"
   | "createdAt_ASC"
   | "createdAt_DESC"
   | "updatedAt_ASC"
@@ -337,7 +284,32 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface LessonScalarWhereInput {
+export interface PageUpdateWithWhereUniqueWithoutLessonInput {
+  where: PageWhereUniqueInput;
+  data: PageUpdateWithoutLessonDataInput;
+}
+
+export type GroupWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
+
+export interface GroupCreateOneWithoutLessonsInput {
+  create?: GroupCreateWithoutLessonsInput;
+  connect?: GroupWhereUniqueInput;
+}
+
+export interface PageUpdateManyWithWhereNestedInput {
+  where: PageScalarWhereInput;
+  data: PageUpdateManyDataInput;
+}
+
+export interface GroupCreateInput {
+  name: String;
+  lessons?: LessonCreateManyWithoutGroupInput;
+}
+
+export interface GroupWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -366,280 +338,17 @@ export interface LessonScalarWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
-  AND?: LessonScalarWhereInput[] | LessonScalarWhereInput;
-  OR?: LessonScalarWhereInput[] | LessonScalarWhereInput;
-  NOT?: LessonScalarWhereInput[] | LessonScalarWhereInput;
+  lessons_every?: LessonWhereInput;
+  lessons_some?: LessonWhereInput;
+  lessons_none?: LessonWhereInput;
+  AND?: GroupWhereInput[] | GroupWhereInput;
+  OR?: GroupWhereInput[] | GroupWhereInput;
+  NOT?: GroupWhereInput[] | GroupWhereInput;
 }
 
-export type GroupWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-  name?: String;
-}>;
-
-export interface PageCreateWithoutLessonInput {
-  pageNumber: Int;
-  data: String;
-}
-
-export interface PageCreateInput {
-  pageNumber: Int;
-  data: String;
-  lesson: LessonCreateOneWithoutPagesInput;
-}
-
-export interface GroupUpdateInput {
-  name?: String;
-  lessons?: LessonUpdateManyWithoutGroupInput;
-}
-
-export interface UserSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: UserWhereInput;
-  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
-}
-
-export interface LessonUpdateManyWithoutGroupInput {
+export interface LessonCreateManyWithoutGroupInput {
   create?: LessonCreateWithoutGroupInput[] | LessonCreateWithoutGroupInput;
-  delete?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
   connect?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
-  disconnect?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
-  update?:
-    | LessonUpdateWithWhereUniqueWithoutGroupInput[]
-    | LessonUpdateWithWhereUniqueWithoutGroupInput;
-  upsert?:
-    | LessonUpsertWithWhereUniqueWithoutGroupInput[]
-    | LessonUpsertWithWhereUniqueWithoutGroupInput;
-  deleteMany?: LessonScalarWhereInput[] | LessonScalarWhereInput;
-  updateMany?:
-    | LessonUpdateManyWithWhereNestedInput[]
-    | LessonUpdateManyWithWhereNestedInput;
-}
-
-export interface PageSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: PageWhereInput;
-  AND?: PageSubscriptionWhereInput[] | PageSubscriptionWhereInput;
-  OR?: PageSubscriptionWhereInput[] | PageSubscriptionWhereInput;
-  NOT?: PageSubscriptionWhereInput[] | PageSubscriptionWhereInput;
-}
-
-export interface LessonUpdateWithWhereUniqueWithoutGroupInput {
-  where: LessonWhereUniqueInput;
-  data: LessonUpdateWithoutGroupDataInput;
-}
-
-export interface LessonSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: LessonWhereInput;
-  AND?: LessonSubscriptionWhereInput[] | LessonSubscriptionWhereInput;
-  OR?: LessonSubscriptionWhereInput[] | LessonSubscriptionWhereInput;
-  NOT?: LessonSubscriptionWhereInput[] | LessonSubscriptionWhereInput;
-}
-
-export interface LessonUpdateWithoutGroupDataInput {
-  name?: String;
-  pages?: PageUpdateManyWithoutLessonInput;
-}
-
-export interface UserUpdateManyMutationInput {
-  name?: String;
-  email?: String;
-  password?: String;
-  facebookId?: String;
-}
-
-export interface PageUpdateManyWithoutLessonInput {
-  create?: PageCreateWithoutLessonInput[] | PageCreateWithoutLessonInput;
-  delete?: PageWhereUniqueInput[] | PageWhereUniqueInput;
-  connect?: PageWhereUniqueInput[] | PageWhereUniqueInput;
-  disconnect?: PageWhereUniqueInput[] | PageWhereUniqueInput;
-  update?:
-    | PageUpdateWithWhereUniqueWithoutLessonInput[]
-    | PageUpdateWithWhereUniqueWithoutLessonInput;
-  upsert?:
-    | PageUpsertWithWhereUniqueWithoutLessonInput[]
-    | PageUpsertWithWhereUniqueWithoutLessonInput;
-  deleteMany?: PageScalarWhereInput[] | PageScalarWhereInput;
-  updateMany?:
-    | PageUpdateManyWithWhereNestedInput[]
-    | PageUpdateManyWithWhereNestedInput;
-}
-
-export interface LinkUpdateManyDataInput {
-  description?: String;
-  url?: String;
-}
-
-export interface PageUpdateWithWhereUniqueWithoutLessonInput {
-  where: PageWhereUniqueInput;
-  data: PageUpdateWithoutLessonDataInput;
-}
-
-export interface LinkScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  url?: String;
-  url_not?: String;
-  url_in?: String[] | String;
-  url_not_in?: String[] | String;
-  url_lt?: String;
-  url_lte?: String;
-  url_gt?: String;
-  url_gte?: String;
-  url_contains?: String;
-  url_not_contains?: String;
-  url_starts_with?: String;
-  url_not_starts_with?: String;
-  url_ends_with?: String;
-  url_not_ends_with?: String;
-  AND?: LinkScalarWhereInput[] | LinkScalarWhereInput;
-  OR?: LinkScalarWhereInput[] | LinkScalarWhereInput;
-  NOT?: LinkScalarWhereInput[] | LinkScalarWhereInput;
-}
-
-export interface PageUpdateWithoutLessonDataInput {
-  pageNumber?: Int;
-  data?: String;
-}
-
-export interface LinkUpsertWithWhereUniqueWithoutPostedByInput {
-  where: LinkWhereUniqueInput;
-  update: LinkUpdateWithoutPostedByDataInput;
-  create: LinkCreateWithoutPostedByInput;
-}
-
-export interface PageUpsertWithWhereUniqueWithoutLessonInput {
-  where: PageWhereUniqueInput;
-  update: PageUpdateWithoutLessonDataInput;
-  create: PageCreateWithoutLessonInput;
-}
-
-export interface LinkWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  description?: String;
-  description_not?: String;
-  description_in?: String[] | String;
-  description_not_in?: String[] | String;
-  description_lt?: String;
-  description_lte?: String;
-  description_gt?: String;
-  description_gte?: String;
-  description_contains?: String;
-  description_not_contains?: String;
-  description_starts_with?: String;
-  description_not_starts_with?: String;
-  description_ends_with?: String;
-  description_not_ends_with?: String;
-  url?: String;
-  url_not?: String;
-  url_in?: String[] | String;
-  url_not_in?: String[] | String;
-  url_lt?: String;
-  url_lte?: String;
-  url_gt?: String;
-  url_gte?: String;
-  url_contains?: String;
-  url_not_contains?: String;
-  url_starts_with?: String;
-  url_not_starts_with?: String;
-  url_ends_with?: String;
-  url_not_ends_with?: String;
-  postedBy?: UserWhereInput;
-  AND?: LinkWhereInput[] | LinkWhereInput;
-  OR?: LinkWhereInput[] | LinkWhereInput;
-  NOT?: LinkWhereInput[] | LinkWhereInput;
-}
-
-export interface PageScalarWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  pageNumber?: Int;
-  pageNumber_not?: Int;
-  pageNumber_in?: Int[] | Int;
-  pageNumber_not_in?: Int[] | Int;
-  pageNumber_lt?: Int;
-  pageNumber_lte?: Int;
-  pageNumber_gt?: Int;
-  pageNumber_gte?: Int;
-  data?: String;
-  data_not?: String;
-  data_in?: String[] | String;
-  data_not_in?: String[] | String;
-  data_lt?: String;
-  data_lte?: String;
-  data_gt?: String;
-  data_gte?: String;
-  data_contains?: String;
-  data_not_contains?: String;
-  data_starts_with?: String;
-  data_not_starts_with?: String;
-  data_ends_with?: String;
-  data_not_ends_with?: String;
-  AND?: PageScalarWhereInput[] | PageScalarWhereInput;
-  OR?: PageScalarWhereInput[] | PageScalarWhereInput;
-  NOT?: PageScalarWhereInput[] | PageScalarWhereInput;
 }
 
 export interface LessonWhereInput {
@@ -680,46 +389,78 @@ export interface LessonWhereInput {
   NOT?: LessonWhereInput[] | LessonWhereInput;
 }
 
-export interface PageUpdateManyWithWhereNestedInput {
-  where: PageScalarWhereInput;
-  data: PageUpdateManyDataInput;
+export interface LessonCreateWithoutGroupInput {
+  name: String;
+  pages?: PageCreateManyWithoutLessonInput;
 }
 
-export interface LinkUpdateManyWithoutPostedByInput {
-  create?: LinkCreateWithoutPostedByInput[] | LinkCreateWithoutPostedByInput;
-  delete?: LinkWhereUniqueInput[] | LinkWhereUniqueInput;
-  connect?: LinkWhereUniqueInput[] | LinkWhereUniqueInput;
-  disconnect?: LinkWhereUniqueInput[] | LinkWhereUniqueInput;
+export interface GroupSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: GroupWhereInput;
+  AND?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
+  OR?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
+  NOT?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
+}
+
+export interface PageCreateManyWithoutLessonInput {
+  create?: PageCreateWithoutLessonInput[] | PageCreateWithoutLessonInput;
+  connect?: PageWhereUniqueInput[] | PageWhereUniqueInput;
+}
+
+export interface UserUpdateInput {
+  name?: String;
+  email?: String;
+  password?: String;
+  facebookId?: String;
+  completedLessons?: String;
+}
+
+export interface PageCreateWithoutLessonInput {
+  pageNumber: Int;
+  data: String;
+}
+
+export type LessonWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface GroupUpdateInput {
+  name?: String;
+  lessons?: LessonUpdateManyWithoutGroupInput;
+}
+
+export interface LessonUpsertWithoutPagesInput {
+  update: LessonUpdateWithoutPagesDataInput;
+  create: LessonCreateWithoutPagesInput;
+}
+
+export interface LessonUpdateManyWithoutGroupInput {
+  create?: LessonCreateWithoutGroupInput[] | LessonCreateWithoutGroupInput;
+  delete?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
+  connect?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
+  disconnect?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
   update?:
-    | LinkUpdateWithWhereUniqueWithoutPostedByInput[]
-    | LinkUpdateWithWhereUniqueWithoutPostedByInput;
+    | LessonUpdateWithWhereUniqueWithoutGroupInput[]
+    | LessonUpdateWithWhereUniqueWithoutGroupInput;
   upsert?:
-    | LinkUpsertWithWhereUniqueWithoutPostedByInput[]
-    | LinkUpsertWithWhereUniqueWithoutPostedByInput;
-  deleteMany?: LinkScalarWhereInput[] | LinkScalarWhereInput;
+    | LessonUpsertWithWhereUniqueWithoutGroupInput[]
+    | LessonUpsertWithWhereUniqueWithoutGroupInput;
+  deleteMany?: LessonScalarWhereInput[] | LessonScalarWhereInput;
   updateMany?:
-    | LinkUpdateManyWithWhereNestedInput[]
-    | LinkUpdateManyWithWhereNestedInput;
-}
-
-export interface PageUpdateManyDataInput {
-  pageNumber?: Int;
-  data?: String;
+    | LessonUpdateManyWithWhereNestedInput[]
+    | LessonUpdateManyWithWhereNestedInput;
 }
 
 export type PageWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
 }>;
 
-export interface LessonUpsertWithWhereUniqueWithoutGroupInput {
+export interface LessonUpdateWithWhereUniqueWithoutGroupInput {
   where: LessonWhereUniqueInput;
-  update: LessonUpdateWithoutGroupDataInput;
-  create: LessonCreateWithoutGroupInput;
-}
-
-export interface LinkCreateManyWithoutPostedByInput {
-  create?: LinkCreateWithoutPostedByInput[] | LinkCreateWithoutPostedByInput;
-  connect?: LinkWhereUniqueInput[] | LinkWhereUniqueInput;
+  data: LessonUpdateWithoutGroupDataInput;
 }
 
 export interface PageUpdateInput {
@@ -728,138 +469,32 @@ export interface PageUpdateInput {
   lesson?: LessonUpdateOneRequiredWithoutPagesInput;
 }
 
+export interface LessonUpdateWithoutGroupDataInput {
+  name?: String;
+  pages?: PageUpdateManyWithoutLessonInput;
+}
+
 export type UserWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
   email?: String;
   facebookId?: String;
 }>;
 
-export interface LessonUpdateManyWithWhereNestedInput {
-  where: LessonScalarWhereInput;
-  data: LessonUpdateManyDataInput;
-}
-
-export interface LessonUpsertWithoutPagesInput {
-  update: LessonUpdateWithoutPagesDataInput;
-  create: LessonCreateWithoutPagesInput;
-}
-
-export interface LessonUpdateManyDataInput {
-  name?: String;
-}
-
-export interface LessonUpdateOneRequiredWithoutPagesInput {
-  create?: LessonCreateWithoutPagesInput;
-  update?: LessonUpdateWithoutPagesDataInput;
-  upsert?: LessonUpsertWithoutPagesInput;
-  connect?: LessonWhereUniqueInput;
-}
-
-export interface GroupUpdateManyMutationInput {
-  name?: String;
-}
-
-export interface GroupCreateInput {
-  name: String;
-  lessons?: LessonCreateManyWithoutGroupInput;
-}
-
-export interface LessonCreateWithoutPagesInput {
-  name: String;
-  group: GroupCreateOneWithoutLessonsInput;
-}
-
-export interface LessonCreateWithoutGroupInput {
-  name: String;
-  pages?: PageCreateManyWithoutLessonInput;
-}
-
-export interface LessonCreateOneWithoutPagesInput {
-  create?: LessonCreateWithoutPagesInput;
-  connect?: LessonWhereUniqueInput;
-}
-
-export interface PageWhereInput {
-  id?: ID_Input;
-  id_not?: ID_Input;
-  id_in?: ID_Input[] | ID_Input;
-  id_not_in?: ID_Input[] | ID_Input;
-  id_lt?: ID_Input;
-  id_lte?: ID_Input;
-  id_gt?: ID_Input;
-  id_gte?: ID_Input;
-  id_contains?: ID_Input;
-  id_not_contains?: ID_Input;
-  id_starts_with?: ID_Input;
-  id_not_starts_with?: ID_Input;
-  id_ends_with?: ID_Input;
-  id_not_ends_with?: ID_Input;
-  pageNumber?: Int;
-  pageNumber_not?: Int;
-  pageNumber_in?: Int[] | Int;
-  pageNumber_not_in?: Int[] | Int;
-  pageNumber_lt?: Int;
-  pageNumber_lte?: Int;
-  pageNumber_gt?: Int;
-  pageNumber_gte?: Int;
-  data?: String;
-  data_not?: String;
-  data_in?: String[] | String;
-  data_not_in?: String[] | String;
-  data_lt?: String;
-  data_lte?: String;
-  data_gt?: String;
-  data_gte?: String;
-  data_contains?: String;
-  data_not_contains?: String;
-  data_starts_with?: String;
-  data_not_starts_with?: String;
-  data_ends_with?: String;
-  data_not_ends_with?: String;
-  lesson?: LessonWhereInput;
-  AND?: PageWhereInput[] | PageWhereInput;
-  OR?: PageWhereInput[] | PageWhereInput;
-  NOT?: PageWhereInput[] | PageWhereInput;
-}
-
-export interface LessonCreateInput {
-  name: String;
-  group: GroupCreateOneWithoutLessonsInput;
-  pages?: PageCreateManyWithoutLessonInput;
-}
-
-export interface LinkSubscriptionWhereInput {
-  mutation_in?: MutationType[] | MutationType;
-  updatedFields_contains?: String;
-  updatedFields_contains_every?: String[] | String;
-  updatedFields_contains_some?: String[] | String;
-  node?: LinkWhereInput;
-  AND?: LinkSubscriptionWhereInput[] | LinkSubscriptionWhereInput;
-  OR?: LinkSubscriptionWhereInput[] | LinkSubscriptionWhereInput;
-  NOT?: LinkSubscriptionWhereInput[] | LinkSubscriptionWhereInput;
-}
-
-export interface GroupCreateOneWithoutLessonsInput {
-  create?: GroupCreateWithoutLessonsInput;
-  connect?: GroupWhereUniqueInput;
-}
-
-export type LessonWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface GroupCreateWithoutLessonsInput {
-  name: String;
-}
-
-export type LinkWhereUniqueInput = AtLeastOne<{
-  id: ID_Input;
-}>;
-
-export interface LessonUpdateInput {
-  name?: String;
-  group?: GroupUpdateOneRequiredWithoutLessonsInput;
-  pages?: PageUpdateManyWithoutLessonInput;
+export interface PageUpdateManyWithoutLessonInput {
+  create?: PageCreateWithoutLessonInput[] | PageCreateWithoutLessonInput;
+  delete?: PageWhereUniqueInput[] | PageWhereUniqueInput;
+  connect?: PageWhereUniqueInput[] | PageWhereUniqueInput;
+  disconnect?: PageWhereUniqueInput[] | PageWhereUniqueInput;
+  update?:
+    | PageUpdateWithWhereUniqueWithoutLessonInput[]
+    | PageUpdateWithWhereUniqueWithoutLessonInput;
+  upsert?:
+    | PageUpsertWithWhereUniqueWithoutLessonInput[]
+    | PageUpsertWithWhereUniqueWithoutLessonInput;
+  deleteMany?: PageScalarWhereInput[] | PageScalarWhereInput;
+  updateMany?:
+    | PageUpdateManyWithWhereNestedInput[]
+    | PageUpdateManyWithWhereNestedInput;
 }
 
 export interface UserWhereInput {
@@ -919,9 +554,6 @@ export interface UserWhereInput {
   password_not_starts_with?: String;
   password_ends_with?: String;
   password_not_ends_with?: String;
-  links_every?: LinkWhereInput;
-  links_some?: LinkWhereInput;
-  links_none?: LinkWhereInput;
   facebookId?: String;
   facebookId_not?: String;
   facebookId_in?: String[] | String;
@@ -936,6 +568,20 @@ export interface UserWhereInput {
   facebookId_not_starts_with?: String;
   facebookId_ends_with?: String;
   facebookId_not_ends_with?: String;
+  completedLessons?: String;
+  completedLessons_not?: String;
+  completedLessons_in?: String[] | String;
+  completedLessons_not_in?: String[] | String;
+  completedLessons_lt?: String;
+  completedLessons_lte?: String;
+  completedLessons_gt?: String;
+  completedLessons_gte?: String;
+  completedLessons_contains?: String;
+  completedLessons_not_contains?: String;
+  completedLessons_starts_with?: String;
+  completedLessons_not_starts_with?: String;
+  completedLessons_ends_with?: String;
+  completedLessons_not_ends_with?: String;
   AND?: UserWhereInput[] | UserWhereInput;
   OR?: UserWhereInput[] | UserWhereInput;
   NOT?: UserWhereInput[] | UserWhereInput;
@@ -948,52 +594,158 @@ export interface GroupUpdateOneRequiredWithoutLessonsInput {
   connect?: GroupWhereUniqueInput;
 }
 
-export interface UserUpdateInput {
+export interface LessonUpdateManyMutationInput {
   name?: String;
-  email?: String;
-  password?: String;
-  links?: LinkUpdateManyWithoutPostedByInput;
-  facebookId?: String;
+}
+
+export interface PageUpdateWithoutLessonDataInput {
+  pageNumber?: Int;
+  data?: String;
 }
 
 export interface GroupUpdateWithoutLessonsDataInput {
   name?: String;
 }
 
-export interface UserCreateInput {
-  name: String;
+export interface PageUpsertWithWhereUniqueWithoutLessonInput {
+  where: PageWhereUniqueInput;
+  update: PageUpdateWithoutLessonDataInput;
+  create: PageCreateWithoutLessonInput;
+}
+
+export interface PageSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: PageWhereInput;
+  AND?: PageSubscriptionWhereInput[] | PageSubscriptionWhereInput;
+  OR?: PageSubscriptionWhereInput[] | PageSubscriptionWhereInput;
+  NOT?: PageSubscriptionWhereInput[] | PageSubscriptionWhereInput;
+}
+
+export interface PageScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  pageNumber?: Int;
+  pageNumber_not?: Int;
+  pageNumber_in?: Int[] | Int;
+  pageNumber_not_in?: Int[] | Int;
+  pageNumber_lt?: Int;
+  pageNumber_lte?: Int;
+  pageNumber_gt?: Int;
+  pageNumber_gte?: Int;
+  data?: String;
+  data_not?: String;
+  data_in?: String[] | String;
+  data_not_in?: String[] | String;
+  data_lt?: String;
+  data_lte?: String;
+  data_gt?: String;
+  data_gte?: String;
+  data_contains?: String;
+  data_not_contains?: String;
+  data_starts_with?: String;
+  data_not_starts_with?: String;
+  data_ends_with?: String;
+  data_not_ends_with?: String;
+  AND?: PageScalarWhereInput[] | PageScalarWhereInput;
+  OR?: PageScalarWhereInput[] | PageScalarWhereInput;
+  NOT?: PageScalarWhereInput[] | PageScalarWhereInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  name?: String;
   email?: String;
   password?: String;
-  links?: LinkCreateManyWithoutPostedByInput;
   facebookId?: String;
+  completedLessons?: String;
 }
 
-export interface GroupUpsertWithoutLessonsInput {
-  update: GroupUpdateWithoutLessonsDataInput;
-  create: GroupCreateWithoutLessonsInput;
+export interface PageWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  pageNumber?: Int;
+  pageNumber_not?: Int;
+  pageNumber_in?: Int[] | Int;
+  pageNumber_not_in?: Int[] | Int;
+  pageNumber_lt?: Int;
+  pageNumber_lte?: Int;
+  pageNumber_gt?: Int;
+  pageNumber_gte?: Int;
+  data?: String;
+  data_not?: String;
+  data_in?: String[] | String;
+  data_not_in?: String[] | String;
+  data_lt?: String;
+  data_lte?: String;
+  data_gt?: String;
+  data_gte?: String;
+  data_contains?: String;
+  data_not_contains?: String;
+  data_starts_with?: String;
+  data_not_starts_with?: String;
+  data_ends_with?: String;
+  data_not_ends_with?: String;
+  lesson?: LessonWhereInput;
+  AND?: PageWhereInput[] | PageWhereInput;
+  OR?: PageWhereInput[] | PageWhereInput;
+  NOT?: PageWhereInput[] | PageWhereInput;
 }
 
-export interface LessonUpdateWithoutPagesDataInput {
-  name?: String;
-  group?: GroupUpdateOneRequiredWithoutLessonsInput;
+export interface PageUpdateManyMutationInput {
+  pageNumber?: Int;
+  data?: String;
 }
 
-export interface LessonUpdateManyMutationInput {
-  name?: String;
+export interface PageUpdateManyDataInput {
+  pageNumber?: Int;
+  data?: String;
 }
 
-export interface LessonCreateManyWithoutGroupInput {
-  create?: LessonCreateWithoutGroupInput[] | LessonCreateWithoutGroupInput;
-  connect?: LessonWhereUniqueInput[] | LessonWhereUniqueInput;
+export interface LessonUpdateOneRequiredWithoutPagesInput {
+  create?: LessonCreateWithoutPagesInput;
+  update?: LessonUpdateWithoutPagesDataInput;
+  upsert?: LessonUpsertWithoutPagesInput;
+  connect?: LessonWhereUniqueInput;
 }
 
-export interface LinkCreateInput {
-  description: String;
-  url: String;
-  postedBy?: UserCreateOneWithoutLinksInput;
+export interface LessonUpsertWithWhereUniqueWithoutGroupInput {
+  where: LessonWhereUniqueInput;
+  update: LessonUpdateWithoutGroupDataInput;
+  create: LessonCreateWithoutGroupInput;
 }
 
-export interface GroupWhereInput {
+export interface LessonCreateOneWithoutPagesInput {
+  create?: LessonCreateWithoutPagesInput;
+  connect?: LessonWhereUniqueInput;
+}
+
+export interface LessonScalarWhereInput {
   id?: ID_Input;
   id_not?: ID_Input;
   id_in?: ID_Input[] | ID_Input;
@@ -1022,117 +774,93 @@ export interface GroupWhereInput {
   name_not_starts_with?: String;
   name_ends_with?: String;
   name_not_ends_with?: String;
-  lessons_every?: LessonWhereInput;
-  lessons_some?: LessonWhereInput;
-  lessons_none?: LessonWhereInput;
-  AND?: GroupWhereInput[] | GroupWhereInput;
-  OR?: GroupWhereInput[] | GroupWhereInput;
-  NOT?: GroupWhereInput[] | GroupWhereInput;
+  AND?: LessonScalarWhereInput[] | LessonScalarWhereInput;
+  OR?: LessonScalarWhereInput[] | LessonScalarWhereInput;
+  NOT?: LessonScalarWhereInput[] | LessonScalarWhereInput;
 }
 
-export interface UserCreateOneWithoutLinksInput {
-  create?: UserCreateWithoutLinksInput;
-  connect?: UserWhereUniqueInput;
+export interface GroupUpsertWithoutLessonsInput {
+  update: GroupUpdateWithoutLessonsDataInput;
+  create: GroupCreateWithoutLessonsInput;
 }
 
-export interface LinkUpdateManyWithWhereNestedInput {
-  where: LinkScalarWhereInput;
-  data: LinkUpdateManyDataInput;
+export interface LessonUpdateManyWithWhereNestedInput {
+  where: LessonScalarWhereInput;
+  data: LessonUpdateManyDataInput;
 }
 
-export interface UserCreateWithoutLinksInput {
-  name: String;
-  email?: String;
-  password?: String;
-  facebookId?: String;
-}
-
-export interface LinkUpdateWithWhereUniqueWithoutPostedByInput {
-  where: LinkWhereUniqueInput;
-  data: LinkUpdateWithoutPostedByDataInput;
-}
-
-export interface LinkUpdateInput {
-  description?: String;
-  url?: String;
-  postedBy?: UserUpdateOneWithoutLinksInput;
-}
-
-export interface PageUpdateManyMutationInput {
-  pageNumber?: Int;
-  data?: String;
-}
-
-export interface LinkUpdateManyMutationInput {
-  description?: String;
-  url?: String;
-}
-
-export interface UserUpsertWithoutLinksInput {
-  update: UserUpdateWithoutLinksDataInput;
-  create: UserCreateWithoutLinksInput;
-}
-
-export interface UserUpdateWithoutLinksDataInput {
-  name?: String;
-  email?: String;
-  password?: String;
-  facebookId?: String;
-}
-
-export interface UserUpdateOneWithoutLinksInput {
-  create?: UserCreateWithoutLinksInput;
-  update?: UserUpdateWithoutLinksDataInput;
-  upsert?: UserUpsertWithoutLinksInput;
-  delete?: Boolean;
-  disconnect?: Boolean;
-  connect?: UserWhereUniqueInput;
-}
-
-export interface LinkCreateWithoutPostedByInput {
-  description: String;
-  url: String;
-}
-
-export interface LinkUpdateWithoutPostedByDataInput {
-  description?: String;
-  url?: String;
-}
-
-export interface GroupSubscriptionWhereInput {
+export interface LessonSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
   updatedFields_contains_every?: String[] | String;
   updatedFields_contains_some?: String[] | String;
-  node?: GroupWhereInput;
-  AND?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
-  OR?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
-  NOT?: GroupSubscriptionWhereInput[] | GroupSubscriptionWhereInput;
+  node?: LessonWhereInput;
+  AND?: LessonSubscriptionWhereInput[] | LessonSubscriptionWhereInput;
+  OR?: LessonSubscriptionWhereInput[] | LessonSubscriptionWhereInput;
+  NOT?: LessonSubscriptionWhereInput[] | LessonSubscriptionWhereInput;
 }
 
-export interface PageCreateManyWithoutLessonInput {
-  create?: PageCreateWithoutLessonInput[] | PageCreateWithoutLessonInput;
-  connect?: PageWhereUniqueInput[] | PageWhereUniqueInput;
+export interface LessonUpdateManyDataInput {
+  name?: String;
+}
+
+export interface LessonUpdateWithoutPagesDataInput {
+  name?: String;
+  group?: GroupUpdateOneRequiredWithoutLessonsInput;
+}
+
+export interface LessonCreateInput {
+  name: String;
+  group: GroupCreateOneWithoutLessonsInput;
+  pages?: PageCreateManyWithoutLessonInput;
+}
+
+export interface GroupCreateWithoutLessonsInput {
+  name: String;
+}
+
+export interface LessonUpdateInput {
+  name?: String;
+  group?: GroupUpdateOneRequiredWithoutLessonsInput;
+  pages?: PageUpdateManyWithoutLessonInput;
+}
+
+export interface GroupUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface LessonCreateWithoutPagesInput {
+  name: String;
+  group: GroupCreateOneWithoutLessonsInput;
+}
+
+export interface UserCreateInput {
+  name: String;
+  email?: String;
+  password?: String;
+  facebookId?: String;
+  completedLessons?: String;
+}
+
+export interface UserSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: UserWhereInput;
+  AND?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  OR?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+  NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
+}
+
+export interface PageCreateInput {
+  pageNumber: Int;
+  data: String;
+  lesson: LessonCreateOneWithoutPagesInput;
 }
 
 export interface NodeNode {
   id: ID_Output;
-}
-
-export interface BatchPayload {
-  count: Long;
-}
-
-export interface BatchPayloadPromise
-  extends Promise<BatchPayload>,
-    Fragmentable {
-  count: () => Promise<Long>;
-}
-
-export interface BatchPayloadSubscription
-  extends Promise<AsyncIterator<BatchPayload>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Long>>;
 }
 
 export interface UserPreviousValues {
@@ -1141,6 +869,7 @@ export interface UserPreviousValues {
   email?: String;
   password?: String;
   facebookId?: String;
+  completedLessons?: String;
 }
 
 export interface UserPreviousValuesPromise
@@ -1151,6 +880,7 @@ export interface UserPreviousValuesPromise
   email: () => Promise<String>;
   password: () => Promise<String>;
   facebookId: () => Promise<String>;
+  completedLessons: () => Promise<String>;
 }
 
 export interface UserPreviousValuesSubscription
@@ -1161,23 +891,28 @@ export interface UserPreviousValuesSubscription
   email: () => Promise<AsyncIterator<String>>;
   password: () => Promise<AsyncIterator<String>>;
   facebookId: () => Promise<AsyncIterator<String>>;
+  completedLessons: () => Promise<AsyncIterator<String>>;
 }
 
-export interface LessonEdge {
-  node: Lesson;
-  cursor: String;
+export interface LessonConnection {
+  pageInfo: PageInfo;
+  edges: LessonEdge[];
 }
 
-export interface LessonEdgePromise extends Promise<LessonEdge>, Fragmentable {
-  node: <T = LessonPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface LessonEdgeSubscription
-  extends Promise<AsyncIterator<LessonEdge>>,
+export interface LessonConnectionPromise
+  extends Promise<LessonConnection>,
     Fragmentable {
-  node: <T = LessonSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<LessonEdge>>() => T;
+  aggregate: <T = AggregateLessonPromise>() => T;
+}
+
+export interface LessonConnectionSubscription
+  extends Promise<AsyncIterator<LessonConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<LessonEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateLessonSubscription>() => T;
 }
 
 export interface PageSubscriptionPayload {
@@ -1203,6 +938,71 @@ export interface PageSubscriptionPayloadSubscription
   node: <T = PageSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
   previousValues: <T = PagePreviousValuesSubscription>() => T;
+}
+
+export interface AggregateGroup {
+  count: Int;
+}
+
+export interface AggregateGroupPromise
+  extends Promise<AggregateGroup>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateGroupSubscription
+  extends Promise<AsyncIterator<AggregateGroup>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface GroupEdge {
+  node: Group;
+  cursor: String;
+}
+
+export interface GroupEdgePromise extends Promise<GroupEdge>, Fragmentable {
+  node: <T = GroupPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface GroupEdgeSubscription
+  extends Promise<AsyncIterator<GroupEdge>>,
+    Fragmentable {
+  node: <T = GroupSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface BatchPayload {
+  count: Long;
+}
+
+export interface BatchPayloadPromise
+  extends Promise<BatchPayload>,
+    Fragmentable {
+  count: () => Promise<Long>;
+}
+
+export interface BatchPayloadSubscription
+  extends Promise<AsyncIterator<BatchPayload>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Long>>;
+}
+
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface Lesson {
@@ -1246,76 +1046,6 @@ export interface LessonSubscription
   ) => T;
 }
 
-export interface LessonConnection {
-  pageInfo: PageInfo;
-  edges: LessonEdge[];
-}
-
-export interface LessonConnectionPromise
-  extends Promise<LessonConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<LessonEdge>>() => T;
-  aggregate: <T = AggregateLessonPromise>() => T;
-}
-
-export interface LessonConnectionSubscription
-  extends Promise<AsyncIterator<LessonConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<LessonEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateLessonSubscription>() => T;
-}
-
-export interface AggregateGroup {
-  count: Int;
-}
-
-export interface AggregateGroupPromise
-  extends Promise<AggregateGroup>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateGroupSubscription
-  extends Promise<AsyncIterator<AggregateGroup>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface AggregateUser {
-  count: Int;
-}
-
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface GroupEdge {
-  node: Group;
-  cursor: String;
-}
-
-export interface GroupEdgePromise extends Promise<GroupEdge>, Fragmentable {
-  node: <T = GroupPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface GroupEdgeSubscription
-  extends Promise<AsyncIterator<GroupEdge>>,
-    Fragmentable {
-  node: <T = GroupSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
 export interface UserConnection {
   pageInfo: PageInfo;
   edges: UserEdge[];
@@ -1337,42 +1067,95 @@ export interface UserConnectionSubscription
   aggregate: <T = AggregateUserSubscription>() => T;
 }
 
-export interface Page {
+export interface PageInfo {
+  hasNextPage: Boolean;
+  hasPreviousPage: Boolean;
+  startCursor?: String;
+  endCursor?: String;
+}
+
+export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
+  hasNextPage: () => Promise<Boolean>;
+  hasPreviousPage: () => Promise<Boolean>;
+  startCursor: () => Promise<String>;
+  endCursor: () => Promise<String>;
+}
+
+export interface PageInfoSubscription
+  extends Promise<AsyncIterator<PageInfo>>,
+    Fragmentable {
+  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
+  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
+  startCursor: () => Promise<AsyncIterator<String>>;
+  endCursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface User {
+  id: ID_Output;
+  name: String;
+  email?: String;
+  password?: String;
+  facebookId?: String;
+  completedLessons?: String;
+}
+
+export interface UserPromise extends Promise<User>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  email: () => Promise<String>;
+  password: () => Promise<String>;
+  facebookId: () => Promise<String>;
+  completedLessons: () => Promise<String>;
+}
+
+export interface UserSubscription
+  extends Promise<AsyncIterator<User>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  password: () => Promise<AsyncIterator<String>>;
+  facebookId: () => Promise<AsyncIterator<String>>;
+  completedLessons: () => Promise<AsyncIterator<String>>;
+}
+
+export interface PagePreviousValues {
   id: ID_Output;
   pageNumber: Int;
   data: String;
 }
 
-export interface PagePromise extends Promise<Page>, Fragmentable {
+export interface PagePreviousValuesPromise
+  extends Promise<PagePreviousValues>,
+    Fragmentable {
   id: () => Promise<ID_Output>;
   pageNumber: () => Promise<Int>;
   data: () => Promise<String>;
-  lesson: <T = LessonPromise>() => T;
 }
 
-export interface PageSubscription
-  extends Promise<AsyncIterator<Page>>,
+export interface PagePreviousValuesSubscription
+  extends Promise<AsyncIterator<PagePreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
   pageNumber: () => Promise<AsyncIterator<Int>>;
   data: () => Promise<AsyncIterator<String>>;
-  lesson: <T = LessonSubscription>() => T;
 }
 
-export interface AggregatePage {
-  count: Int;
+export interface PageEdge {
+  node: Page;
+  cursor: String;
 }
 
-export interface AggregatePagePromise
-  extends Promise<AggregatePage>,
+export interface PageEdgePromise extends Promise<PageEdge>, Fragmentable {
+  node: <T = PagePromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface PageEdgeSubscription
+  extends Promise<AsyncIterator<PageEdge>>,
     Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregatePageSubscription
-  extends Promise<AsyncIterator<AggregatePage>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  node: <T = PageSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
 }
 
 export interface GroupSubscriptionPayload {
@@ -1400,25 +1183,20 @@ export interface GroupSubscriptionPayloadSubscription
   previousValues: <T = GroupPreviousValuesSubscription>() => T;
 }
 
-export interface PageConnection {
-  pageInfo: PageInfo;
-  edges: PageEdge[];
+export interface AggregateLesson {
+  count: Int;
 }
 
-export interface PageConnectionPromise
-  extends Promise<PageConnection>,
+export interface AggregateLessonPromise
+  extends Promise<AggregateLesson>,
     Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<PageEdge>>() => T;
-  aggregate: <T = AggregatePagePromise>() => T;
+  count: () => Promise<Int>;
 }
 
-export interface PageConnectionSubscription
-  extends Promise<AsyncIterator<PageConnection>>,
+export interface AggregateLessonSubscription
+  extends Promise<AsyncIterator<AggregateLesson>>,
     Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<PageEdgeSubscription>>>() => T;
-  aggregate: <T = AggregatePageSubscription>() => T;
+  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface GroupPreviousValues {
@@ -1440,292 +1218,29 @@ export interface GroupPreviousValuesSubscription
   name: () => Promise<AsyncIterator<String>>;
 }
 
-export interface LinkEdge {
-  node: Link;
-  cursor: String;
-}
-
-export interface LinkEdgePromise extends Promise<LinkEdge>, Fragmentable {
-  node: <T = LinkPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface LinkEdgeSubscription
-  extends Promise<AsyncIterator<LinkEdge>>,
-    Fragmentable {
-  node: <T = LinkSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface PagePreviousValues {
-  id: ID_Output;
-  pageNumber: Int;
-  data: String;
-}
-
-export interface PagePreviousValuesPromise
-  extends Promise<PagePreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  pageNumber: () => Promise<Int>;
-  data: () => Promise<String>;
-}
-
-export interface PagePreviousValuesSubscription
-  extends Promise<AsyncIterator<PagePreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  pageNumber: () => Promise<AsyncIterator<Int>>;
-  data: () => Promise<AsyncIterator<String>>;
-}
-
-export interface User {
-  id: ID_Output;
-  name: String;
-  email?: String;
-  password?: String;
-  facebookId?: String;
-}
-
-export interface UserPromise extends Promise<User>, Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-  email: () => Promise<String>;
-  password: () => Promise<String>;
-  links: <T = FragmentableArray<Link>>(
-    args?: {
-      where?: LinkWhereInput;
-      orderBy?: LinkOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  facebookId: () => Promise<String>;
-}
-
-export interface UserSubscription
-  extends Promise<AsyncIterator<User>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  password: () => Promise<AsyncIterator<String>>;
-  links: <T = Promise<AsyncIterator<LinkSubscription>>>(
-    args?: {
-      where?: LinkWhereInput;
-      orderBy?: LinkOrderByInput;
-      skip?: Int;
-      after?: String;
-      before?: String;
-      first?: Int;
-      last?: Int;
-    }
-  ) => T;
-  facebookId: () => Promise<AsyncIterator<String>>;
-}
-
-export interface LessonSubscriptionPayload {
+export interface UserSubscriptionPayload {
   mutation: MutationType;
-  node: Lesson;
-  updatedFields: String[];
-  previousValues: LessonPreviousValues;
-}
-
-export interface LessonSubscriptionPayloadPromise
-  extends Promise<LessonSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = LessonPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = LessonPreviousValuesPromise>() => T;
-}
-
-export interface LessonSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<LessonSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = LessonSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = LessonPreviousValuesSubscription>() => T;
-}
-
-export interface AggregateLesson {
-  count: Int;
-}
-
-export interface AggregateLessonPromise
-  extends Promise<AggregateLesson>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateLessonSubscription
-  extends Promise<AsyncIterator<AggregateLesson>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
-}
-
-export interface LessonPreviousValues {
-  id: ID_Output;
-  name: String;
-}
-
-export interface LessonPreviousValuesPromise
-  extends Promise<LessonPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  name: () => Promise<String>;
-}
-
-export interface LessonPreviousValuesSubscription
-  extends Promise<AsyncIterator<LessonPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  name: () => Promise<AsyncIterator<String>>;
-}
-
-export interface UserEdge {
   node: User;
-  cursor: String;
-}
-
-export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
-  node: <T = UserPromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface UserEdgeSubscription
-  extends Promise<AsyncIterator<UserEdge>>,
-    Fragmentable {
-  node: <T = UserSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface PageEdge {
-  node: Page;
-  cursor: String;
-}
-
-export interface PageEdgePromise extends Promise<PageEdge>, Fragmentable {
-  node: <T = PagePromise>() => T;
-  cursor: () => Promise<String>;
-}
-
-export interface PageEdgeSubscription
-  extends Promise<AsyncIterator<PageEdge>>,
-    Fragmentable {
-  node: <T = PageSubscription>() => T;
-  cursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface GroupConnection {
-  pageInfo: PageInfo;
-  edges: GroupEdge[];
-}
-
-export interface GroupConnectionPromise
-  extends Promise<GroupConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<GroupEdge>>() => T;
-  aggregate: <T = AggregateGroupPromise>() => T;
-}
-
-export interface GroupConnectionSubscription
-  extends Promise<AsyncIterator<GroupConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<GroupEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateGroupSubscription>() => T;
-}
-
-export interface LinkPreviousValues {
-  id: ID_Output;
-  description: String;
-  url: String;
-}
-
-export interface LinkPreviousValuesPromise
-  extends Promise<LinkPreviousValues>,
-    Fragmentable {
-  id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
-  url: () => Promise<String>;
-}
-
-export interface LinkPreviousValuesSubscription
-  extends Promise<AsyncIterator<LinkPreviousValues>>,
-    Fragmentable {
-  id: () => Promise<AsyncIterator<ID_Output>>;
-  description: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
-}
-
-export interface LinkSubscriptionPayload {
-  mutation: MutationType;
-  node: Link;
   updatedFields: String[];
-  previousValues: LinkPreviousValues;
+  previousValues: UserPreviousValues;
 }
 
-export interface LinkSubscriptionPayloadPromise
-  extends Promise<LinkSubscriptionPayload>,
+export interface UserSubscriptionPayloadPromise
+  extends Promise<UserSubscriptionPayload>,
     Fragmentable {
   mutation: () => Promise<MutationType>;
-  node: <T = LinkPromise>() => T;
+  node: <T = UserPromise>() => T;
   updatedFields: () => Promise<String[]>;
-  previousValues: <T = LinkPreviousValuesPromise>() => T;
+  previousValues: <T = UserPreviousValuesPromise>() => T;
 }
 
-export interface LinkSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<LinkSubscriptionPayload>>,
+export interface UserSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
     Fragmentable {
   mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = LinkSubscription>() => T;
+  node: <T = UserSubscription>() => T;
   updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = LinkPreviousValuesSubscription>() => T;
-}
-
-export interface PageInfo {
-  hasNextPage: Boolean;
-  hasPreviousPage: Boolean;
-  startCursor?: String;
-  endCursor?: String;
-}
-
-export interface PageInfoPromise extends Promise<PageInfo>, Fragmentable {
-  hasNextPage: () => Promise<Boolean>;
-  hasPreviousPage: () => Promise<Boolean>;
-  startCursor: () => Promise<String>;
-  endCursor: () => Promise<String>;
-}
-
-export interface PageInfoSubscription
-  extends Promise<AsyncIterator<PageInfo>>,
-    Fragmentable {
-  hasNextPage: () => Promise<AsyncIterator<Boolean>>;
-  hasPreviousPage: () => Promise<AsyncIterator<Boolean>>;
-  startCursor: () => Promise<AsyncIterator<String>>;
-  endCursor: () => Promise<AsyncIterator<String>>;
-}
-
-export interface AggregateLink {
-  count: Int;
-}
-
-export interface AggregateLinkPromise
-  extends Promise<AggregateLink>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateLinkSubscription
-  extends Promise<AsyncIterator<AggregateLink>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
+  previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
 export interface Group {
@@ -1767,72 +1282,162 @@ export interface GroupSubscription
   ) => T;
 }
 
-export interface UserSubscriptionPayload {
-  mutation: MutationType;
-  node: User;
-  updatedFields: String[];
-  previousValues: UserPreviousValues;
-}
-
-export interface UserSubscriptionPayloadPromise
-  extends Promise<UserSubscriptionPayload>,
-    Fragmentable {
-  mutation: () => Promise<MutationType>;
-  node: <T = UserPromise>() => T;
-  updatedFields: () => Promise<String[]>;
-  previousValues: <T = UserPreviousValuesPromise>() => T;
-}
-
-export interface UserSubscriptionPayloadSubscription
-  extends Promise<AsyncIterator<UserSubscriptionPayload>>,
-    Fragmentable {
-  mutation: () => Promise<AsyncIterator<MutationType>>;
-  node: <T = UserSubscription>() => T;
-  updatedFields: () => Promise<AsyncIterator<String[]>>;
-  previousValues: <T = UserPreviousValuesSubscription>() => T;
-}
-
-export interface Link {
+export interface Page {
   id: ID_Output;
-  description: String;
-  url: String;
+  pageNumber: Int;
+  data: String;
 }
 
-export interface LinkPromise extends Promise<Link>, Fragmentable {
+export interface PagePromise extends Promise<Page>, Fragmentable {
   id: () => Promise<ID_Output>;
-  description: () => Promise<String>;
-  url: () => Promise<String>;
-  postedBy: <T = UserPromise>() => T;
+  pageNumber: () => Promise<Int>;
+  data: () => Promise<String>;
+  lesson: <T = LessonPromise>() => T;
 }
 
-export interface LinkSubscription
-  extends Promise<AsyncIterator<Link>>,
+export interface PageSubscription
+  extends Promise<AsyncIterator<Page>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<ID_Output>>;
-  description: () => Promise<AsyncIterator<String>>;
-  url: () => Promise<AsyncIterator<String>>;
-  postedBy: <T = UserSubscription>() => T;
+  pageNumber: () => Promise<AsyncIterator<Int>>;
+  data: () => Promise<AsyncIterator<String>>;
+  lesson: <T = LessonSubscription>() => T;
 }
 
-export interface LinkConnection {
+export interface LessonPreviousValues {
+  id: ID_Output;
+  name: String;
+}
+
+export interface LessonPreviousValuesPromise
+  extends Promise<LessonPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+}
+
+export interface LessonPreviousValuesSubscription
+  extends Promise<AsyncIterator<LessonPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface LessonSubscriptionPayload {
+  mutation: MutationType;
+  node: Lesson;
+  updatedFields: String[];
+  previousValues: LessonPreviousValues;
+}
+
+export interface LessonSubscriptionPayloadPromise
+  extends Promise<LessonSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = LessonPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = LessonPreviousValuesPromise>() => T;
+}
+
+export interface LessonSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<LessonSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = LessonSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = LessonPreviousValuesSubscription>() => T;
+}
+
+export interface GroupConnection {
   pageInfo: PageInfo;
-  edges: LinkEdge[];
+  edges: GroupEdge[];
 }
 
-export interface LinkConnectionPromise
-  extends Promise<LinkConnection>,
+export interface GroupConnectionPromise
+  extends Promise<GroupConnection>,
     Fragmentable {
   pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<LinkEdge>>() => T;
-  aggregate: <T = AggregateLinkPromise>() => T;
+  edges: <T = FragmentableArray<GroupEdge>>() => T;
+  aggregate: <T = AggregateGroupPromise>() => T;
 }
 
-export interface LinkConnectionSubscription
-  extends Promise<AsyncIterator<LinkConnection>>,
+export interface GroupConnectionSubscription
+  extends Promise<AsyncIterator<GroupConnection>>,
     Fragmentable {
   pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<LinkEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateLinkSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<GroupEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateGroupSubscription>() => T;
+}
+
+export interface AggregatePage {
+  count: Int;
+}
+
+export interface AggregatePagePromise
+  extends Promise<AggregatePage>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregatePageSubscription
+  extends Promise<AsyncIterator<AggregatePage>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface UserEdge {
+  node: User;
+  cursor: String;
+}
+
+export interface UserEdgePromise extends Promise<UserEdge>, Fragmentable {
+  node: <T = UserPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface UserEdgeSubscription
+  extends Promise<AsyncIterator<UserEdge>>,
+    Fragmentable {
+  node: <T = UserSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface LessonEdge {
+  node: Lesson;
+  cursor: String;
+}
+
+export interface LessonEdgePromise extends Promise<LessonEdge>, Fragmentable {
+  node: <T = LessonPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface LessonEdgeSubscription
+  extends Promise<AsyncIterator<LessonEdge>>,
+    Fragmentable {
+  node: <T = LessonSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface PageConnection {
+  pageInfo: PageInfo;
+  edges: PageEdge[];
+}
+
+export interface PageConnectionPromise
+  extends Promise<PageConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<PageEdge>>() => T;
+  aggregate: <T = AggregatePagePromise>() => T;
+}
+
+export interface PageConnectionSubscription
+  extends Promise<AsyncIterator<PageConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<PageEdgeSubscription>>>() => T;
+  aggregate: <T = AggregatePageSubscription>() => T;
 }
 
 /*
@@ -1849,14 +1454,14 @@ export type ID_Input = string | number;
 export type ID_Output = string;
 
 /*
-The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
-*/
-export type String = string;
-
-/*
 The `Boolean` scalar type represents `true` or `false`.
 */
 export type Boolean = boolean;
+
+/*
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
+*/
+export type String = string;
 
 /**
  * Model Metadata
@@ -1869,10 +1474,6 @@ export const models: Model[] = [
   },
   {
     name: "Lesson",
-    embedded: false
-  },
-  {
-    name: "Link",
     embedded: false
   },
   {

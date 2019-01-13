@@ -13,10 +13,6 @@ var models = [
     embedded: false
   },
   {
-    name: "Link",
-    embedded: false
-  },
-  {
     name: "Page",
     embedded: false
   },

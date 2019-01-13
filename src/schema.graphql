@@ -1,8 +1,6 @@
 type Query {
-  info: String!
-  # feed: [Link!]!
   users: [User!]!
-  user(facebookId: String!): User!
+  user(token: String!): User!
   group(name: String!): Group!
   groups: [Group!]!
   lessons: [Lesson!]!
@@ -11,7 +9,6 @@ type Query {
 }
 
 type Mutation {
-  # post(url: String!, description: String!): Link!
   fbAuth(facebookId: String!, name: String!): AuthPayload
   signup(email: String!, password: String!, name: String): AuthPayload
   login(email: String!, password: String!): AuthPayload
@@ -21,14 +18,8 @@ type Mutation {
   deletePage(lessonId: String!, pageNumber: Int!): Page!
   deleteUser(id: ID!): User!
   SignUpMutation(password: String!, name: String!): AuthPayload
+  completeLesson(token: String!, lessonId: String!): User!
 }
-
-# type Link {
-#   id: ID!
-#   description: String!
-#   url: String!
-#   postedBy: User
-# }
 
 type AuthPayload {
   token: String
@@ -40,8 +31,8 @@ type User {
   name: String!
   email: String
   password: String
-  # links: [Link!]!
   facebookId: String
+  completedLessons: String
 }
 
 type Group {

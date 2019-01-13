@@ -4,6 +4,7 @@ type User {
   email: String @unique
   password: String
   facebookId: String @unique
+  completedLessons: String
 }
 
 type Group {

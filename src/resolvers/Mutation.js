@@ -1,6 +1,7 @@
 const { secret } = require('../lib/config')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { getUserId } = require('../utils.js')
 
 async function signup(parent, args, context, info) {
   let user = await context.prisma.user({ email: args.email })
@@ -15,6 +16,23 @@ async function signup(parent, args, context, info) {
     token: token,
     user: user
   }
+}
+
+async function completeLesson(parent, args, context, info) {
+  const id = getUserId(args.token)
+  const user = await context.prisma.user({ id })
+  if (user.completedLessons) {
+    const arr = JSON.parse(user.completedLessons)
+    if (arr.indexOf(args.lessonId)) {
+      console.log('here?', arr.indexOf(args.lessonId), arr, args.lessonId)
+      arr.push(args.lessonId)
+      const string = JSON.stringify(arr)
+      return context.prisma.updateUser({ where: { id }, data: { completedLessons: string } })
+    }
+    return user
+  }
+  const string = JSON.stringify([args.lessonId])
+  return context.prisma.updateUser({ where: { id }, data: { completedLessons: string } })
 }
 
 async function fbAuth(parent, args, context, info) {
@@ -88,5 +106,6 @@ module.exports = {
   postPage,
   deleteUser,
   fbAuth,
-  deletePage
+  deletePage,
+  completeLesson
 }

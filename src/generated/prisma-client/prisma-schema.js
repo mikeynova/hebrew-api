@@ -7,10 +7,6 @@ type AggregateLesson {
   count: Int!
 }
 
-type AggregateLink {
-  count: Int!
-}
-
 type AggregatePage {
   count: Int!
 }
@@ -372,226 +368,6 @@ input LessonWhereUniqueInput {
   id: ID
 }
 
-type Link {
-  id: ID!
-  description: String!
-  url: String!
-  postedBy: User
-}
-
-type LinkConnection {
-  pageInfo: PageInfo!
-  edges: [LinkEdge]!
-  aggregate: AggregateLink!
-}
-
-input LinkCreateInput {
-  description: String!
-  url: String!
-  postedBy: UserCreateOneWithoutLinksInput
-}
-
-input LinkCreateManyWithoutPostedByInput {
-  create: [LinkCreateWithoutPostedByInput!]
-  connect: [LinkWhereUniqueInput!]
-}
-
-input LinkCreateWithoutPostedByInput {
-  description: String!
-  url: String!
-}
-
-type LinkEdge {
-  node: Link!
-  cursor: String!
-}
-
-enum LinkOrderByInput {
-  id_ASC
-  id_DESC
-  description_ASC
-  description_DESC
-  url_ASC
-  url_DESC
-  createdAt_ASC
-  createdAt_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-}
-
-type LinkPreviousValues {
-  id: ID!
-  description: String!
-  url: String!
-}
-
-input LinkScalarWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
-  AND: [LinkScalarWhereInput!]
-  OR: [LinkScalarWhereInput!]
-  NOT: [LinkScalarWhereInput!]
-}
-
-type LinkSubscriptionPayload {
-  mutation: MutationType!
-  node: Link
-  updatedFields: [String!]
-  previousValues: LinkPreviousValues
-}
-
-input LinkSubscriptionWhereInput {
-  mutation_in: [MutationType!]
-  updatedFields_contains: String
-  updatedFields_contains_every: [String!]
-  updatedFields_contains_some: [String!]
-  node: LinkWhereInput
-  AND: [LinkSubscriptionWhereInput!]
-  OR: [LinkSubscriptionWhereInput!]
-  NOT: [LinkSubscriptionWhereInput!]
-}
-
-input LinkUpdateInput {
-  description: String
-  url: String
-  postedBy: UserUpdateOneWithoutLinksInput
-}
-
-input LinkUpdateManyDataInput {
-  description: String
-  url: String
-}
-
-input LinkUpdateManyMutationInput {
-  description: String
-  url: String
-}
-
-input LinkUpdateManyWithoutPostedByInput {
-  create: [LinkCreateWithoutPostedByInput!]
-  delete: [LinkWhereUniqueInput!]
-  connect: [LinkWhereUniqueInput!]
-  disconnect: [LinkWhereUniqueInput!]
-  update: [LinkUpdateWithWhereUniqueWithoutPostedByInput!]
-  upsert: [LinkUpsertWithWhereUniqueWithoutPostedByInput!]
-  deleteMany: [LinkScalarWhereInput!]
-  updateMany: [LinkUpdateManyWithWhereNestedInput!]
-}
-
-input LinkUpdateManyWithWhereNestedInput {
-  where: LinkScalarWhereInput!
-  data: LinkUpdateManyDataInput!
-}
-
-input LinkUpdateWithoutPostedByDataInput {
-  description: String
-  url: String
-}
-
-input LinkUpdateWithWhereUniqueWithoutPostedByInput {
-  where: LinkWhereUniqueInput!
-  data: LinkUpdateWithoutPostedByDataInput!
-}
-
-input LinkUpsertWithWhereUniqueWithoutPostedByInput {
-  where: LinkWhereUniqueInput!
-  update: LinkUpdateWithoutPostedByDataInput!
-  create: LinkCreateWithoutPostedByInput!
-}
-
-input LinkWhereInput {
-  id: ID
-  id_not: ID
-  id_in: [ID!]
-  id_not_in: [ID!]
-  id_lt: ID
-  id_lte: ID
-  id_gt: ID
-  id_gte: ID
-  id_contains: ID
-  id_not_contains: ID
-  id_starts_with: ID
-  id_not_starts_with: ID
-  id_ends_with: ID
-  id_not_ends_with: ID
-  description: String
-  description_not: String
-  description_in: [String!]
-  description_not_in: [String!]
-  description_lt: String
-  description_lte: String
-  description_gt: String
-  description_gte: String
-  description_contains: String
-  description_not_contains: String
-  description_starts_with: String
-  description_not_starts_with: String
-  description_ends_with: String
-  description_not_ends_with: String
-  url: String
-  url_not: String
-  url_in: [String!]
-  url_not_in: [String!]
-  url_lt: String
-  url_lte: String
-  url_gt: String
-  url_gte: String
-  url_contains: String
-  url_not_contains: String
-  url_starts_with: String
-  url_not_starts_with: String
-  url_ends_with: String
-  url_not_ends_with: String
-  postedBy: UserWhereInput
-  AND: [LinkWhereInput!]
-  OR: [LinkWhereInput!]
-  NOT: [LinkWhereInput!]
-}
-
-input LinkWhereUniqueInput {
-  id: ID
-}
-
 scalar Long
 
 type Mutation {
@@ -607,12 +383,6 @@ type Mutation {
   upsertLesson(where: LessonWhereUniqueInput!, create: LessonCreateInput!, update: LessonUpdateInput!): Lesson!
   deleteLesson(where: LessonWhereUniqueInput!): Lesson
   deleteManyLessons(where: LessonWhereInput): BatchPayload!
-  createLink(data: LinkCreateInput!): Link!
-  updateLink(data: LinkUpdateInput!, where: LinkWhereUniqueInput!): Link
-  updateManyLinks(data: LinkUpdateManyMutationInput!, where: LinkWhereInput): BatchPayload!
-  upsertLink(where: LinkWhereUniqueInput!, create: LinkCreateInput!, update: LinkUpdateInput!): Link!
-  deleteLink(where: LinkWhereUniqueInput!): Link
-  deleteManyLinks(where: LinkWhereInput): BatchPayload!
   createPage(data: PageCreateInput!): Page!
   updatePage(data: PageUpdateInput!, where: PageWhereUniqueInput!): Page
   updateManyPages(data: PageUpdateManyMutationInput!, where: PageWhereInput): BatchPayload!
@@ -859,9 +629,6 @@ type Query {
   lesson(where: LessonWhereUniqueInput!): Lesson
   lessons(where: LessonWhereInput, orderBy: LessonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Lesson]!
   lessonsConnection(where: LessonWhereInput, orderBy: LessonOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LessonConnection!
-  link(where: LinkWhereUniqueInput!): Link
-  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link]!
-  linksConnection(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): LinkConnection!
   page(where: PageWhereUniqueInput!): Page
   pages(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Page]!
   pagesConnection(where: PageWhereInput, orderBy: PageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PageConnection!
@@ -874,7 +641,6 @@ type Query {
 type Subscription {
   group(where: GroupSubscriptionWhereInput): GroupSubscriptionPayload
   lesson(where: LessonSubscriptionWhereInput): LessonSubscriptionPayload
-  link(where: LinkSubscriptionWhereInput): LinkSubscriptionPayload
   page(where: PageSubscriptionWhereInput): PageSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
@@ -884,8 +650,8 @@ type User {
   name: String!
   email: String
   password: String
-  links(where: LinkWhereInput, orderBy: LinkOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Link!]
   facebookId: String
+  completedLessons: String
 }
 
 type UserConnection {
@@ -898,20 +664,8 @@ input UserCreateInput {
   name: String!
   email: String
   password: String
-  links: LinkCreateManyWithoutPostedByInput
   facebookId: String
-}
-
-input UserCreateOneWithoutLinksInput {
-  create: UserCreateWithoutLinksInput
-  connect: UserWhereUniqueInput
-}
-
-input UserCreateWithoutLinksInput {
-  name: String!
-  email: String
-  password: String
-  facebookId: String
+  completedLessons: String
 }
 
 type UserEdge {
@@ -930,6 +684,8 @@ enum UserOrderByInput {
   password_DESC
   facebookId_ASC
   facebookId_DESC
+  completedLessons_ASC
+  completedLessons_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -942,6 +698,7 @@ type UserPreviousValues {
   email: String
   password: String
   facebookId: String
+  completedLessons: String
 }
 
 type UserSubscriptionPayload {
@@ -966,8 +723,8 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  links: LinkUpdateManyWithoutPostedByInput
   facebookId: String
+  completedLessons: String
 }
 
 input UserUpdateManyMutationInput {
@@ -975,27 +732,7 @@ input UserUpdateManyMutationInput {
   email: String
   password: String
   facebookId: String
-}
-
-input UserUpdateOneWithoutLinksInput {
-  create: UserCreateWithoutLinksInput
-  update: UserUpdateWithoutLinksDataInput
-  upsert: UserUpsertWithoutLinksInput
-  delete: Boolean
-  disconnect: Boolean
-  connect: UserWhereUniqueInput
-}
-
-input UserUpdateWithoutLinksDataInput {
-  name: String
-  email: String
-  password: String
-  facebookId: String
-}
-
-input UserUpsertWithoutLinksInput {
-  update: UserUpdateWithoutLinksDataInput!
-  create: UserCreateWithoutLinksInput!
+  completedLessons: String
 }
 
 input UserWhereInput {
@@ -1055,9 +792,6 @@ input UserWhereInput {
   password_not_starts_with: String
   password_ends_with: String
   password_not_ends_with: String
-  links_every: LinkWhereInput
-  links_some: LinkWhereInput
-  links_none: LinkWhereInput
   facebookId: String
   facebookId_not: String
   facebookId_in: [String!]
@@ -1072,6 +806,20 @@ input UserWhereInput {
   facebookId_not_starts_with: String
   facebookId_ends_with: String
   facebookId_not_ends_with: String
+  completedLessons: String
+  completedLessons_not: String
+  completedLessons_in: [String!]
+  completedLessons_not_in: [String!]
+  completedLessons_lt: String
+  completedLessons_lte: String
+  completedLessons_gt: String
+  completedLessons_gte: String
+  completedLessons_contains: String
+  completedLessons_not_contains: String
+  completedLessons_starts_with: String
+  completedLessons_not_starts_with: String
+  completedLessons_ends_with: String
+  completedLessons_not_ends_with: String
   AND: [UserWhereInput!]
   OR: [UserWhereInput!]
   NOT: [UserWhereInput!]

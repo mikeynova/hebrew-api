@@ -1,9 +1,12 @@
+const { getUserId } = require('../utils.js')
+
 function users(parent, args, context, info) {
   return context.prisma.users()
 }
 
-function user(parent, args, context, info) {
-  return context.prisma.user(args)
+async function user(parent, args, context, info) {
+  const userId = getUserId(args.token)
+  return context.prisma.user({ id: userId })
 }
 
 async function group(parent, args, context, info) {
